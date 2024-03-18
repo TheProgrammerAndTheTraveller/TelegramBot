@@ -1,3 +1,4 @@
+using System.Reflection.PortableExecutable;
 using TelegramInteraction;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<BotHostedService>();
 builder.Services.AddHttpClient<CatApi>();
+
+builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);
 
 var app = builder.Build();
 

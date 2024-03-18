@@ -93,8 +93,7 @@ public class BotHostedService : IHostedService
                 break;
             case Buttons.Button3:
                 await client.SendPhotoAsync(chatId: chatId,
-                     photo: InputFile.FromString(await _catApi.GetCatUri
-                    ()),
+                     photo: InputFile.FromString(await _catApi.GetCatUri()),
                     cancellationToken: token);
                 break;
             default:
