@@ -17,10 +17,21 @@ namespace TelegramBot.Data.Repositories
         {
             _appDbContext = appDbContext;
         }
-
-        public async Task<IEnumerable<Catalog>> GetAll()
+        //реализуй!
+        public async Task<int> Add(Product catalog)
         {
-            var catalog = await _appDbContext.Catalog.ToArrayAsync();
+            await _appDbContext.Catalog.AddAsync(catalog);
+            await _appDbContext.SaveChangesAsync();
+            return catalog.Id;
+        }
+
+        public async Task<IEnumerable<Product>> GetAll()
+        {
+            var catalog = await _appDbContext.Catalog
+                .Include(e => e.Attributes)
+                .ThenInclude(e => e.Attribute)
+                .ToArrayAsync();
+
             return catalog;
         }
     }

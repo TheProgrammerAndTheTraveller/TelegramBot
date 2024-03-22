@@ -22,8 +22,4 @@
     <ProjectReference Include="..\TelegramInteraction\TelegramInteraction.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

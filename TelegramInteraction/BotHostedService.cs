@@ -7,6 +7,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Domain;
 using TelegramBot.Domain.Repositories;
 
 namespace TelegramInteraction;
@@ -119,13 +120,23 @@ public class BotHostedService : IHostedService
 
         var catalog = await repository.GetAll();
 
-        var texts = catalog.Select(c => $"Товар: {c.Name}\nОписание: {c.Description}\nЦена: {c.Price}$").ToArray();
+        var texts = catalog.Select(c =>
+        @$"Товар: {c.Name}
+        Описание: {c.Description}
+        Цена: {c.Price} 
+        Свойства: {GetAttributes(c)}")
+            .ToArray();
         var text = string.Join("\n\n", texts);
 
         await client.SendTextMessageAsync(
                             chatId: chatId,
                             text: $"Вот каталог: \n{text}",
                             cancellationToken: token);
+    }
+
+    private static string GetAttributes(Product product)
+    {
+        return string.Join("\n", product.Attributes.Select(e => $"{e.Attribute.Name}: {e.Value}"));
     }
 
     private async Task CustomerChoose(ITelegramBotClient client, long chatId, CancellationToken token)

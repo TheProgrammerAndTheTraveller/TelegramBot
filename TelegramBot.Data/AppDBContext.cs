@@ -1,20 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TelegramBot.Domain;
 
 namespace TelegramBot.Data
 {
     public class AppDbContext : DbContext
     {   
-        public DbSet<Catalog> Catalog {  get; set; }
+        public DbSet<Product> Catalog {  get; set; }
         public DbSet<ClickCount> ClickCounts { get; set; }
- 
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public DbSet<Domain.Attribute> Attributes { get; set; }
+        public DbSet<Categories> Categories { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
