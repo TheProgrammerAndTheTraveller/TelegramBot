@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Concurrent;
 using Telegram.Bot;
@@ -6,6 +7,8 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Domain;
+using TelegramBot.Domain.Repositories;
 
 namespace TelegramInteraction;
 
@@ -14,11 +17,13 @@ public class BotHostedService : IHostedService
     private readonly TelegramBotClient _botClient;
     private readonly ConcurrentDictionary<long, int> QuerryCounts = new ();
     private readonly CatApi _catApi;
+    private readonly IServiceProvider _serviceProvider;
 
-    public BotHostedService(IConfiguration configuration, CatApi catApi)
+    public BotHostedService(IConfiguration configuration, CatApi catApi, IServiceProvider serviceProvider)
     {
         _botClient = new TelegramBotClient(configuration["TelegramToken"]!);
         _catApi = catApi;
+        _serviceProvider = serviceProvider;
     }
 
     /// <summary>
@@ -86,10 +91,7 @@ public class BotHostedService : IHostedService
                 
                 break;
             case Buttons.Button2:
-                await client.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: "Вот каталог: нихуя нет",
-                    cancellationToken: token);
+                await GetCatalog(client, chatId, token);
                 break;
             case Buttons.Button3:
                 await client.SendPhotoAsync(chatId: chatId,
@@ -111,10 +113,37 @@ public class BotHostedService : IHostedService
         }
     }
 
+    private async Task GetCatalog(ITelegramBotClient client, long chatId, CancellationToken token)
+    {
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        var repository = scope.ServiceProvider.GetRequiredService<ICatalogRepository>();
+
+        var catalog = await repository.GetAll();
+
+        var texts = catalog.Select(c =>
+        @$"Товар: {c.Name}
+        Описание: {c.Description}
+        Цена: {c.Price} 
+        Свойства: {GetAttributes(c)}")
+            .ToArray();
+        var text = string.Join("\n\n", texts);
+
+        await client.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: $"Вот каталог: \n{text}",
+                            cancellationToken: token);
+    }
+
+    private static string GetAttributes(Product product)
+    {
+        return string.Join("\n", product.Attributes.Select(e => $"{e.Attribute.Name}: {e.Value}"));
+    }
+
     private async Task CustomerChoose(ITelegramBotClient client, long chatId, CancellationToken token)
     {
-        var result = QuerryCounts.AddOrUpdate(chatId, 1, (id, count) => count + 1);
-
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        var repository = scope.ServiceProvider.GetRequiredService<ICountRepository>();
+        var result = await repository.GetCount(chatId);
         if (result < 3)
         {
             await client.SendTextMessageAsync(
