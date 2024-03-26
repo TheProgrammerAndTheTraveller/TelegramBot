@@ -17,5 +17,6 @@ namespace TelegramBot.Domain
         public virtual List<ProductAttribute> Attributes { get; set; } = null!;
 
         public virtual Categories Category { get; set; } = null!;
+        public List<OrderDetails> OrderDetails { get; set; } = new();
     }
 }

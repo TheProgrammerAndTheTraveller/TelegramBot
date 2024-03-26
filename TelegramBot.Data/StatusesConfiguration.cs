@@ -15,6 +15,10 @@ namespace TelegramBot.Data
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).UseIdentityAlwaysColumn();
+            builder.HasMany(e => e.OrderDetails)
+                .WithOne(e => e.Status)
+                .HasForeignKey(e => e.StatusID);
+
             builder.ToTable("Statuses");
         }
     }

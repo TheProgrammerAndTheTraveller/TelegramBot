@@ -14,6 +14,7 @@ namespace TelegramBot.Data
                 .WithOne(u => u.Product)
                 .HasForeignKey(u => u.ProductId);
 
+           builder.HasMany(u=>u.OrderDetails).WithOne(u=>u.Product).HasForeignKey(u => u.ProductId);
             builder.ToTable("Products");
         }
     }
