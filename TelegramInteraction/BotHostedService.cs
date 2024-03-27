@@ -31,9 +31,6 @@ public class BotHostedService : IHostedService
     /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-
-
-
         ReceiverOptions receiverOptions = new()
         {
             AllowedUpdates = Array.Empty<UpdateType>() // receive all update types except ChatMember related updates
@@ -116,7 +113,7 @@ public class BotHostedService : IHostedService
     private async Task GetCatalog(ITelegramBotClient client, long chatId, CancellationToken token)
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
-        var repository = scope.ServiceProvider.GetRequiredService<ICatalogRepository>();
+        var repository = scope.ServiceProvider.GetRequiredService<IProductRepository>();
 
         var catalog = await repository.GetAll();
 
