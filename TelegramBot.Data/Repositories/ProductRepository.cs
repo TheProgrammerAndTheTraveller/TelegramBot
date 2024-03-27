@@ -9,11 +9,11 @@ using TelegramBot.Domain.Repositories;
 
 namespace TelegramBot.Data.Repositories
 {
-    public class CatalogRepository : ICatalogRepository
+    public class ProductRepository : IProductRepository
     {
         public readonly AppDbContext _appDbContext;
 
-        public CatalogRepository(AppDbContext appDbContext)
+        public ProductRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }

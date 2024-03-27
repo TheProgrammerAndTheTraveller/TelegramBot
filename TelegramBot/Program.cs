@@ -3,6 +3,8 @@ using System;
 using System.Reflection.PortableExecutable;
 using TelegramBot.Data;
 using TelegramBot.Data.Repositories;
+using TelegramBot.DbFirst;
+using TelegramBot.DbFirst.Repositories;
 using TelegramBot.Domain.Repositories;
 using TelegramInteraction;
 
@@ -16,11 +18,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<BotHostedService>();
 builder.Services.AddHttpClient<CatApi>();
-builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
-builder.Services.AddScoped<ICountRepository, CountRepository>();
+builder.Services.AddScoped<IProductRepository, DbFirstProductRepository>();
+builder.Services.AddScoped<ICountRepository, DBFirstCountRepository>();
 
 var connectionString = builder.Configuration.GetConnectionString("TelegramDB");
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<TelegramBotContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);

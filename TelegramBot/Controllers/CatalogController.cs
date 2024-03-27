@@ -9,9 +9,9 @@ namespace TelegramBot.Controllers
     [Route("[controller]")]
     public class CatalogController : ControllerBase
     {
-        private readonly ICatalogRepository _catalogRepository;
+        private readonly IProductRepository _catalogRepository;
 
-        public CatalogController(ICatalogRepository catalogRepository) {
+        public CatalogController(IProductRepository catalogRepository) {
             _catalogRepository = catalogRepository;
         }
         [HttpPost]

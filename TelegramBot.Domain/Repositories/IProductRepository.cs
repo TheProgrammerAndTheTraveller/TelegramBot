@@ -3,7 +3,7 @@ using TelegramBot.Domain;
 
 namespace TelegramBot.Domain.Repositories
 {
-    public interface ICatalogRepository
+    public interface IProductRepository
     {
         Task<IEnumerable<Product>> GetAll();
         Task<int> Add(Product catalog);
